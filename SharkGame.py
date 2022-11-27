@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 import time
+
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 route = macRoute
 size = width, height =(800, 800)
