@@ -3,6 +3,8 @@ from pygame.locals import *
 import random
 import time
 
+#I should see this on my windows computer
+
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 route = macRoute
 size = width, height =(800, 800)
