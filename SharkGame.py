@@ -2,17 +2,15 @@ import pygame
 from pygame.locals import *
 import random
 import time
-
-
-
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
+route = macRoute
 size = width, height =(800, 800)
 roadmark_w = int(width/80)
 rightSide = width + 100
 leftSide = -100
 topSide = -100
 bottomSide = height + 100
-level = 1
+level = 1 
 score = 0
 pygame.init()
 
@@ -42,21 +40,21 @@ scoreText = myFont.render("Score: "+str(score), 1, "black")
 levelText = myFont.render("Level: "+str(level), 1, "black")
 
 #loading sharks
-rightShark = pygame.image.load(macRoute+"RightShark.png")
+rightShark = pygame.image.load(route+"RightShark.png")
 rightShark_loc = rightShark.get_rect()
 rightShark_loc.center = leftSide, height*0.5
-leftShark = pygame.image.load(macRoute+"LeftShark.png")
+leftShark = pygame.image.load(route+"LeftShark.png")
 leftShark_loc = leftShark.get_rect()
 leftShark_loc.center = rightSide, height*0.5
-upShark = pygame.image.load(macRoute+"UpShark.png")
+upShark = pygame.image.load(route+"UpShark.png")
 upShark_loc = upShark.get_rect()
 upShark_loc.center = width*0.5, bottomSide
-downShark = pygame.image.load(macRoute+"DownShark.png")
+downShark = pygame.image.load(route+"DownShark.png")
 downShark_loc = downShark.get_rect()
 downShark_loc.center = width*0.5, topSide
 
 #loading player
-player = pygame.image.load(macRoute+"Player.png")
+player = pygame.image.load(route+"Player.png")
 player_loc = player.get_rect()
 player_loc.center = width*0.5, height*0.5
 
