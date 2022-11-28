@@ -5,6 +5,7 @@ import time
 
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 windowsRoute = "C:\\Users\\Darren Osborne\\Documents\\Programming\\SharkGame\\"
+otherRoute = ""
 route = windowsRoute
 size = width, height =(800, 800)
 roadmark_w = int(width/80)
