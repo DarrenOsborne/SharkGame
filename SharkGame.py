@@ -3,10 +3,9 @@ from pygame.locals import *
 import random
 import time
 
-#I should see this on my windows computer
-
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
-route = macRoute
+windowsRoute = "C:\\Users\\Darren Osborne\\Documents\\Programming\\SharkGame\\"
+route = windowsRoute
 size = width, height =(800, 800)
 roadmark_w = int(width/80)
 rightSide = width + 100
@@ -25,10 +24,14 @@ def drawThings():
   pygame.draw.rect(screen, (255,255,255), (10, 10, width/10, height/30))
   pygame.draw.rect(screen, (255,255,255), (width-(width/10)-10, 10, width/10, height/30))
 def drawLevelScreen(l):
-  pygame.draw.rect(screen, (255,255,255), (0, 0, width, height))
+  #pygame.draw.rect(screen, (255,255,255), (0, 0, width, height))
   levelScreen = scoreScreenFont.render("Level: "+str(l), 1, "black")
-  screen.blit(levelScreen, (width/2, height/2))
-  time.sleep(5)
+  screen.blit(levelScreen, (width/2-50, height/2))
+  pygame.display.update()
+  time.sleep(2)
+  screen.fill((21, 137, 238))
+  pygame.display.update()
+
 
 
 
@@ -67,16 +70,17 @@ leftShark_locContainer = 0
 tick = 0
 
 #game loop
+
+scoreScreenIndicator = 0
 time.sleep(1)
 while(running):
   tick+=1
-  #animating sharks
-  scoreScreenIndicator = 0
+  #animating sharks and level screen
   if score<20:
     level = 1
     if scoreScreenIndicator==0:
-      drawLevelScreen(level)
       scoreScreenIndicator+=1
+      drawLevelScreen(level)
     if tick%2==0:
       if score%4==0:
         leftShark_loc[0]+=-1
@@ -108,7 +112,7 @@ while(running):
       downShark_loc[1]+=1
       rightShark_loc[0]+=1
       upShark_loc[1]+=-1
-  else:
+  elif score < 120:
     level = 4
     if scoreScreenIndicator==3:
       drawLevelScreen(level)
@@ -118,6 +122,15 @@ while(running):
       downShark_loc[1]+=1
       rightShark_loc[0]+=1
       upShark_loc[1]+=-1
+  else:
+    level = 5
+    if scoreScreenIndicator==3:
+      drawLevelScreen(level)
+      scoreScreenIndicator+=1
+    leftShark_loc[0]+=-1
+    downShark_loc[1]+=1
+    rightShark_loc[0]+=1
+    upShark_loc[1]+=-1
         
 
   #resetting sharks and increasing score
