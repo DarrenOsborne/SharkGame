@@ -32,10 +32,6 @@ def drawLevelScreen(l):
   screen.fill((21, 137, 238))
   pygame.display.update()
 
-
-
-
-
 pygame.display.set_caption("AnotherGame")
 pygame.display.update()
 
