@@ -2,11 +2,13 @@ import pygame
 from pygame.locals import *
 import random
 import time
+from datetime import datetime
+import json
 
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 windowsRoute = "C:\\Users\\Darren Osborne\\Documents\\Programming\\SharkGame\\"
-otherRoute = ""
-route = windowsRoute
+otherRoute = "C:\\Users\\Ethan\\OneDrive\\Documents\\Coding\\GitStuff\\DarrenGame\\SharkGame\\"
+route = otherRoute
 size = width, height =(800, 800)
 roadmark_w = int(width/80)
 rightSide = width + 100
@@ -16,10 +18,39 @@ bottomSide = height + 100
 level = 1 
 score = 0
 pygame.init()
+#player = str(input("What is your player name?"))
 
 running = True
 screen = pygame.display. set_mode(size)
 screen.fill((21, 137, 238))
+
+def uploadHighScore(score, player):
+  dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+  f = open("highscores.json")
+  highscores = json.load(f)
+  fakeHighScore = True
+  for highscore in highscores:
+    if int(highscores[highscore][0]) < int(score) and highscores[highscore][1] == player:
+      fakeHighScore = False
+  if not fakeHighScore:
+    highscores.update({score:[score, player, dt_string]})
+    json_object = json.dumps(highscores, indent=3)
+    with open("highscores.json", "w") as outfile:
+      outfile.write(json_object)
+    print("You just scored a highscore of " + score + "!")
+  return fakeHighScore
+  
+
+def getHighScore(player):
+  f = open("highscores.json")
+  highscores = json.load(f)
+  highscore = -1
+  for score in highscores:
+    if highscores[score][1] == player and int(highscores[score][0]) > int(highscore):
+      highscore = highscores[score][0]
+      dateAndTime = highscores[score][2]
+  print("You have a highscore of " + str(highscore) + " which you earned on " + dateAndTime + "!")
+  
 
 def drawThings():
   pygame.draw.rect(screen, (255,255,255), (10, 10, width/10, height/30))
@@ -32,6 +63,8 @@ def drawLevelScreen(l):
   time.sleep(2)
   screen.fill((21, 137, 238))
   pygame.display.update()
+
+
 
 pygame.display.set_caption("AnotherGame")
 pygame.display.update()
@@ -161,6 +194,8 @@ while(running):
     print("GAME OVER")
     print("Your score was "+str(score))
     print("At level "+str(level))
+    if uploadHighScore(score, "Ethan"):
+      getHighScore("Ethan")
     break
 
   #player movement
