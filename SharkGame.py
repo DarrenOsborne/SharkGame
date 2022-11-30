@@ -77,8 +77,6 @@ def uploadHighScore(score, player):
   json_object = json.dumps(highscores, indent=3)
   with open("highscores.json", "w") as outfile:
     outfile.write(json_object)
-  
-
 def getHighScores(player):
   # LOADS THE JSON FILE INTO A DICTIONARY
   f = open("highscores.json")
@@ -95,7 +93,6 @@ def getHighScores(player):
   print()
   for score in topTenScores:
     print(str(score[0]) + " Points on " + str(score[2]))
-
 def drawThings():
   pygame.draw.rect(screen, (255,255,255), (10, 10, width/10, height/30))
   pygame.draw.rect(screen, (255,255,255), (width-(width/10)-10, 10, width/10, height/30))
@@ -107,8 +104,6 @@ def drawLevelScreen(l):
   time.sleep(2)
   screen.fill((21, 137, 238))
   pygame.display.update()
-
-
 
 pygame.display.set_caption("AnotherGame")
 pygame.display.update()
@@ -144,7 +139,6 @@ leftShark_locContainer = 0
 tick = 0
 
 #game loop
-
 scoreScreenIndicator = 0
 time.sleep(1)
 while(running):
@@ -220,7 +214,6 @@ while(running):
   if downShark_loc[1] > height:
     downShark_loc.center = random.randint(0,800), topSide
     score+=1
-  
   
   #end game condition
   if ((player_loc[0]+100>leftShark_loc[0] and player_loc[0]<leftShark_loc[0]+200) \
