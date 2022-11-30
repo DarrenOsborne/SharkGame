@@ -19,7 +19,9 @@ level = 1
 score = 0
 playerName = str(input("What is your player name?"))
 pygame.init()
+ 
 
+ 
 
 running = True
 screen = pygame.display. set_mode(size)
