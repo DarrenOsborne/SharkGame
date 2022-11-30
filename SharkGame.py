@@ -8,7 +8,7 @@ import json
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 windowsRoute = "C:\\Users\\Darren Osborne\\Documents\\Programming\\SharkGame\\"
 otherRoute = "C:\\Users\\Ethan\\OneDrive\\Documents\\Coding\\GitStuff\\DarrenGame\\SharkGame\\"
-route = otherRoute
+route = windowsRoute
 size = width, height =(800, 800)
 roadmark_w = int(width/80)
 rightSide = width + 100
