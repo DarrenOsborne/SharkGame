@@ -17,40 +17,85 @@ topSide = -100
 bottomSide = height + 100
 level = 1 
 score = 0
+playerName = str(input("What is your player name?"))
 pygame.init()
-#player = str(input("What is your player name?"))
+
 
 running = True
 screen = pygame.display. set_mode(size)
 screen.fill((21, 137, 238))
 
 def uploadHighScore(score, player):
-  dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+  # OPEN JSON FILE AND GET CURRENT DATE AND TIME
   f = open("highscores.json")
   highscores = json.load(f)
-  fakeHighScore = True
+  dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+ 
+  # CHECK IF THE PLAYER ALREADY HAS PREVOUS HIGHSCORES
+  oldPlayer = False
   for highscore in highscores:
-    if int(highscores[highscore][0]) < int(score) and highscores[highscore][1] == player:
-      fakeHighScore = False
-  if not fakeHighScore:
-    highscores.update({score:[score, player, dt_string]})
-    json_object = json.dumps(highscores, indent=3)
-    with open("highscores.json", "w") as outfile:
-      outfile.write(json_object)
-    print("You just scored a highscore of " + score + "!")
-  return fakeHighScore
+    if highscores[highscore][1] == player:
+      oldPlayer = True
+  
+  # IF IT IS A NEW PLAYER, MAKE 10 PLACEHOLDER HIGHSCORES FOR THEM
+  if not oldPlayer:
+    for i in range(10):
+      highscores.update({str("Placeholder " + str(i) + " for " + player):["placeholder",player,i]})
+
+  # CHECKING THE DICTIONARY TO SEE IF THERE ARE ANY OPEN PLACEHOLDERS
+  openPlaceholders = False
+  for highscore in highscores:
+    if highscores[highscore][1] == player and str(highscores[highscore][0]) == "placeholder":
+      openPlaceholders = True
+
+  # LOOP THROUGH THE DICTIONARY, LOOKING FOR THE PLACEHOLDER SPOT, 
+  # THEN DELETING IT AND UPDATING WITH THE NEW HIGH SCORE
+  if openPlaceholders:
+    for highscore in highscores:
+      if highscores[highscore][1] == player and str(highscores[highscore][0]) == "placeholder":
+        highscores.pop("Placeholder " + str(highscores[highscore][2]) + " for " + highscores[highscore][1])
+        highscores.update({dt_string:[score, player, dt_string]})
+        break
+  
+  # IF ALL THE PLACEHOLDERS ARE TAKEN, LOOP THROUGH THE DICTIONARY TO FIND THE LOWEST SCORE,
+  # DELETE IT, UPDATE THE DICTIONARY WITH THE NEW HIGH SCORE
+  if not openPlaceholders:
+    actualHighScore = False
+    lowScore = score
+    lowScoreSpot = ""
+    for highscore in highscores:
+      if highscores[highscore][1] == player and not str(highscores[highscore][0]) == "placeholder":
+        if highscores[highscore][0] < lowScore:
+          lowScore = highscores[highscore][0]
+          lowScoreSpot = highscore
+          actualHighScore = True
+
+    if actualHighScore:
+      highscores.pop(lowScoreSpot)
+      highscores.update({dt_string:[score, player, dt_string]})
+  
+  # UPDATE THE JSON FILE WITH THE UPDATED DICTIONARY
+  json_object = json.dumps(highscores, indent=3)
+  with open("highscores.json", "w") as outfile:
+    outfile.write(json_object)
   
 
-def getHighScore(player):
+def getHighScores(player):
+  # LOADS THE JSON FILE INTO A DICTIONARY
   f = open("highscores.json")
   highscores = json.load(f)
-  highscore = -1
-  for score in highscores:
-    if highscores[score][1] == player and int(highscores[score][0]) > int(highscore):
-      highscore = highscores[score][0]
-      dateAndTime = highscores[score][2]
-  print("You have a highscore of " + str(highscore) + " which you earned on " + dateAndTime + "!")
+
+  # ADDS ALL THE SCORES FOR THE PLAYER INTO A TOP TEN SCORES LIST
+  topTenScores = []
+  for highscore in highscores:
+    if str(highscores[highscore][1]) == player:
+      topTenScores.append(highscores[highscore])
   
+  # PRINTS OUT THE TOP TEN SCORES
+  print("Your Top Ten Scores of All Time are: ")
+  print()
+  for score in topTenScores:
+    print(str(score[0]) + " Points on " + str(score[2]))
 
 def drawThings():
   pygame.draw.rect(screen, (255,255,255), (10, 10, width/10, height/30))
@@ -194,8 +239,8 @@ while(running):
     print("GAME OVER")
     print("Your score was "+str(score))
     print("At level "+str(level))
-    if uploadHighScore(score, "Ethan"):
-      getHighScore("Ethan")
+    uploadHighScore(score, str(playerName))
+    getHighScores(str(playerName))
     break
 
   #player movement
