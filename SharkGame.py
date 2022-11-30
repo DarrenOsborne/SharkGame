@@ -138,6 +138,17 @@ rightShark_locContainer = 0
 leftShark_locContainer = 0
 tick = 0
 
+#while(True)
+#asks for name
+#load in background
+#load in buttons
+#event listener for play button,
+#if play button gets pressed:
+# break
+#event listener for highscore button
+#if highscore button gets pressed:
+# sort, then display using text module (for loop)
+
 #game loop
 scoreScreenIndicator = 0
 time.sleep(1)
