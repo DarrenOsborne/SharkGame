@@ -8,7 +8,7 @@ import json
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 windowsRoute = "C:\\Users\\Darren Osborne\\Documents\\Programming\\SharkGame\\"
 otherRoute = "C:\\Users\\Ethan\\OneDrive\\Documents\\Coding\\GitStuff\\DarrenGame\\SharkGame\\"
-route = windowsRoute
+route = otherRoute
 size = width, height =(800, 800)
 roadmark_w = int(width/80)
 rightSide = width + 100
@@ -78,7 +78,8 @@ def uploadHighScore(score, player):
   json_object = json.dumps(highscores, indent=3)
   with open("highscores.json", "w") as outfile:
     outfile.write(json_object)
-def getHighScores(player):
+
+def getYourHighScores(player):
   # LOADS THE JSON FILE INTO A DICTIONARY
   f = open("highscores.json")
   highscores = json.load(f)
@@ -86,14 +87,38 @@ def getHighScores(player):
   # ADDS ALL THE SCORES FOR THE PLAYER INTO A TOP TEN SCORES LIST
   topTenScores = []
   for highscore in highscores:
-    if str(highscores[highscore][1]) == player:
+    if str(highscores[highscore][1]) == player and not str(highscores[highscore][0]) == "placeholder":
       topTenScores.append(highscores[highscore])
   
   # PRINTS OUT THE TOP TEN SCORES
   print("Your Top Ten Scores of All Time are: ")
   print()
-  for score in topTenScores:
-    print(str(score[0]) + " Points on " + str(score[2]))
+  topTenScores.sort()
+  topTenScores.reverse()
+  for i, score in enumerate(topTenScores):
+    print(str(i+1) + ": " + str(score[0]) + " Points on " + str(score[2]))
+
+def getTopTenScores():
+  # LOADS THE JSON FILE INTO A DICTIONARY
+  f = open("highscores.json")
+  highscores = json.load(f)
+
+
+  topTenScores = []
+  for highscore in highscores:
+    if not str(highscores[highscore][0]) == "placeholder":
+      topTenScores.append(highscores[highscore])
+
+  print("The Top Ten Scores of All Time are: ")
+  print()
+  topTenScores.sort()
+  topTenScores.reverse()
+  for i, score in enumerate(topTenScores):
+    print(str(i+1) + ": " + str(score[0]) + " Points on " + str(score[2]) + " by " + str(score[1]))
+    if i+1 == 10:
+      break
+
+
 def drawThings():
   pygame.draw.rect(screen, (255,255,255), (10, 10, width/10, height/30))
   pygame.draw.rect(screen, (255,255,255), (width-(width/10)-10, 10, width/10, height/30))
@@ -274,6 +299,7 @@ while(running):
       downShark_loc.center = random.randint(0,800), topSide
       score+=1
     
+
     #end game condition
     if ((player_loc[0]+100>leftShark_loc[0] and player_loc[0]<leftShark_loc[0]+200) \
       and (player_loc[1]+100>leftShark_loc[1] and player_loc[1]<leftShark_loc[1]+100))\
@@ -291,7 +317,9 @@ while(running):
       print("Your score was "+str(score))
       print("At level "+str(level))
       uploadHighScore(score, str(playerName))
-      getHighScores(str(playerName))
+      getYourHighScores(str(playerName))
+      print()
+      getTopTenScores()
       screen.blit(bloodSplatter, (0,0))
       pygame.display.update()
       time.sleep(2)
