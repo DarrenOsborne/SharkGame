@@ -108,6 +108,9 @@ def drawLevelScreen(l):
 def drawButtons():
   screen.blit(playButton, playButton_loc)
   screen.blit(highscoresButton, highscoresButton_loc)
+  screen.blit(titleImage, titleImage_loc)
+def drawBackButton():
+  screen.blit(backButton, backButton_loc)
 
 pygame.display.set_caption("AnotherGame")
 pygame.display.update()
@@ -118,7 +121,7 @@ myFont = pygame.font.SysFont("Times New Roman", 18)
 scoreText = myFont.render("Score: "+str(score), 1, "black")
 levelText = myFont.render("Level: "+str(level), 1, "black")
 
-#loading sharks
+# loading sharks and player
 rightShark = pygame.image.load(route+"RightShark.png")
 rightShark_loc = rightShark.get_rect()
 leftShark = pygame.image.load(route+"LeftShark.png")
@@ -127,8 +130,6 @@ upShark = pygame.image.load(route+"UpShark.png")
 upShark_loc = upShark.get_rect()
 downShark = pygame.image.load(route+"DownShark.png")
 downShark_loc = downShark.get_rect()
-
-#loading player
 player = pygame.image.load(route+"Player.png")
 player_loc = player.get_rect()
 
@@ -142,19 +143,29 @@ def setCenters():
 #calling right after to initiallize centers
 setCenters()
 
-#loading buttons
+#loading buttons + title image + blood splatter
 playButton = pygame.image.load(route+"PlayButton.png")
 playButton_loc = playButton.get_rect()
-playButton_loc.center = width*0.25, height*0.5
+playButton_loc.center = width*0.25, height*0.75
 highscoresButton = pygame.image.load(route+"HighscoresButton.png")
 highscoresButton_loc = highscoresButton.get_rect()
-highscoresButton_loc.center = width*0.75, height*0.5
+highscoresButton_loc.center = width*0.75, height*0.75
+backButton = pygame.image.load(route+"BackButton.png")
+backButton_loc = backButton.get_rect()
+backButton_loc.center = width*0.25, height*0.75
+titleImage = pygame.image.load(route+"TitleImage.png")
+titleImage_loc = titleImage.get_rect()
+titleImage_loc.center = width*0.5, height*0.4
+bloodSplatter = pygame.image.load(route+"BloodSplatter.png")
+bloodSplatter_loc = titleImage.get_rect()
+bloodSplatter_loc.center = width*0.5, height*0.5
 
 #crafted coordinate containers
 #rightShark_locContainer = 0
 #leftShark_locContainer = 0
 tick = 0
 
+playerName = str(input("What is your player name?"))
 #entire run loop
 while(running):
   #resetting game conditions and booleans
@@ -165,7 +176,6 @@ while(running):
   tick = 0
   score = 0
   level = 0
-  playerName = str(input("What is your player name?"))
   while(running2):
     drawButtons()
     for ev in pygame.event.get(): 
@@ -282,6 +292,9 @@ while(running):
       print("At level "+str(level))
       uploadHighScore(score, str(playerName))
       getHighScores(str(playerName))
+      screen.blit(bloodSplatter, (0,0))
+      pygame.display.update()
+      time.sleep(2)
       #running, running2 = False, False
       break
 
