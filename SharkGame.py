@@ -17,12 +17,13 @@ topSide = -100
 bottomSide = height + 100
 level = 1 
 score = 0
-playerName = str(input("What is your player name?"))
+backgroundColor = (21, 137, 238)
 pygame.init()
 
-running = True
+running, running2 = True, True
+
 screen = pygame.display. set_mode(size)
-screen.fill((21, 137, 238))
+screen.fill(backgroundColor)
 
 def uploadHighScore(score, player):
   # OPEN JSON FILE AND GET CURRENT DATE AND TIME
@@ -77,7 +78,6 @@ def uploadHighScore(score, player):
   json_object = json.dumps(highscores, indent=3)
   with open("highscores.json", "w") as outfile:
     outfile.write(json_object)
-  
 
 def getYourHighScores(player):
   # LOADS THE JSON FILE INTO A DICTIONARY
@@ -128,10 +128,14 @@ def drawLevelScreen(l):
   screen.blit(levelScreen, (width/2-50, height/2))
   pygame.display.update()
   time.sleep(2)
-  screen.fill((21, 137, 238))
+  screen.fill(backgroundColor)
   pygame.display.update()
-
-
+def drawButtons():
+  screen.blit(playButton, playButton_loc)
+  screen.blit(highscoresButton, highscoresButton_loc)
+  screen.blit(titleImage, titleImage_loc)
+def drawBackButton():
+  screen.blit(backButton, backButton_loc)
 
 pygame.display.set_caption("AnotherGame")
 pygame.display.update()
@@ -142,162 +146,217 @@ myFont = pygame.font.SysFont("Times New Roman", 18)
 scoreText = myFont.render("Score: "+str(score), 1, "black")
 levelText = myFont.render("Level: "+str(level), 1, "black")
 
-#loading sharks
+# loading sharks and player
 rightShark = pygame.image.load(route+"RightShark.png")
 rightShark_loc = rightShark.get_rect()
-rightShark_loc.center = leftSide, height*0.5
 leftShark = pygame.image.load(route+"LeftShark.png")
 leftShark_loc = leftShark.get_rect()
-leftShark_loc.center = rightSide, height*0.5
 upShark = pygame.image.load(route+"UpShark.png")
 upShark_loc = upShark.get_rect()
-upShark_loc.center = width*0.5, bottomSide
 downShark = pygame.image.load(route+"DownShark.png")
 downShark_loc = downShark.get_rect()
-downShark_loc.center = width*0.5, topSide
-
-#loading player
 player = pygame.image.load(route+"Player.png")
 player_loc = player.get_rect()
-player_loc.center = width*0.5, height*0.5
+
+#re/setting player and shark centers
+def setCenters():
+  player_loc.center = width*0.5, height*0.5
+  rightShark_loc.center = leftSide, height*0.5
+  leftShark_loc.center = rightSide, height*0.5
+  upShark_loc.center = width*0.5, bottomSide
+  downShark_loc.center = width*0.5, topSide
+#calling right after to initiallize centers
+setCenters()
+
+#loading buttons + title image + blood splatter
+playButton = pygame.image.load(route+"PlayButton.png")
+playButton_loc = playButton.get_rect()
+playButton_loc.center = width*0.25, height*0.75
+highscoresButton = pygame.image.load(route+"HighscoresButton.png")
+highscoresButton_loc = highscoresButton.get_rect()
+highscoresButton_loc.center = width*0.75, height*0.75
+backButton = pygame.image.load(route+"BackButton.png")
+backButton_loc = backButton.get_rect()
+backButton_loc.center = width*0.25, height*0.75
+titleImage = pygame.image.load(route+"TitleImage.png")
+titleImage_loc = titleImage.get_rect()
+titleImage_loc.center = width*0.5, height*0.4
+bloodSplatter = pygame.image.load(route+"BloodSplatter.png")
+bloodSplatter_loc = titleImage.get_rect()
+bloodSplatter_loc.center = width*0.5, height*0.5
 
 #crafted coordinate containers
-rightShark_locContainer = 0
-leftShark_locContainer = 0
+#rightShark_locContainer = 0
+#leftShark_locContainer = 0
 tick = 0
 
-#game loop
-
-scoreScreenIndicator = 0
-time.sleep(1)
+playerName = str(input("What is your player name?"))
+#entire run loop
 while(running):
-  tick+=1
-  #animating sharks and level screen
-  if score<20:
-    level = 1
-    if scoreScreenIndicator==0:
-      scoreScreenIndicator+=1
-      drawLevelScreen(level)
-    if tick%2==0:
-      if score%4==0:
-        leftShark_loc[0]+=-1
-      if score%4==1:
-        rightShark_loc[0]+=1
-      if score%4==2:
-        upShark_loc[1]+=-1
-      if score%4==3:
-        downShark_loc[1]+=1
-  elif score<40:
-    level = 2
-    if scoreScreenIndicator==1:
-      drawLevelScreen(level)
-      scoreScreenIndicator+=1
-    if tick%2==0:
-      if score%4==0:
-        leftShark_loc[0]+=-1
-        downShark_loc[1]+=1
-      if score%4==2:
-        rightShark_loc[0]+=1
-        upShark_loc[1]+=-1
-  elif score<80:
-    level = 3
-    if scoreScreenIndicator==2:
-      drawLevelScreen(level)
-      scoreScreenIndicator+=1
-    if tick%2==0:
-      leftShark_loc[0]+=-1
-      downShark_loc[1]+=1
-      rightShark_loc[0]+=1
-      upShark_loc[1]+=-1
-  elif score < 120:
-    level = 4
-    if scoreScreenIndicator==3:
-      drawLevelScreen(level)
-      scoreScreenIndicator+=1
-    if tick%3>0:
-      leftShark_loc[0]+=-1
-      downShark_loc[1]+=1
-      rightShark_loc[0]+=1
-      upShark_loc[1]+=-1
-  else:
-    level = 5
-    if scoreScreenIndicator==3:
-      drawLevelScreen(level)
-      scoreScreenIndicator+=1
-    leftShark_loc[0]+=-1
-    downShark_loc[1]+=1
-    rightShark_loc[0]+=1
-    upShark_loc[1]+=-1
-        
-
-  #resetting sharks and increasing score
-  if leftShark_loc[0]< -200:
-    leftShark_loc.center = rightSide, random.randint(0,800)
-    score+=1
-  if rightShark_loc[0]> width:
-    rightShark_loc.center = leftSide, random.randint(0,800)
-    score+=1
-  if upShark_loc[1] < -200:
-    upShark_loc.center = random.randint(0,800), bottomSide
-    score+=1
-  if downShark_loc[1] > height:
-    downShark_loc.center = random.randint(0,800), topSide
-    score+=1
-  
-  
-  #end game condition
-  if ((player_loc[0]+100>leftShark_loc[0] and player_loc[0]<leftShark_loc[0]+200) \
-    and (player_loc[1]+100>leftShark_loc[1] and player_loc[1]<leftShark_loc[1]+100))\
-      or\
-        ((player_loc[0]+100>rightShark_loc[0] and player_loc[0]<rightShark_loc[0]+200) \
-    and (player_loc[1]+100>rightShark_loc[1] and player_loc[1]<rightShark_loc[1]+100))\
-      or\
-        ((player_loc[0]+100>upShark_loc[0] and player_loc[0]<upShark_loc[0]+100) \
-    and (player_loc[1]+100>upShark_loc[1] and player_loc[1]<upShark_loc[1]+200))\
-      or\
-        ((player_loc[0]+100>downShark_loc[0] and player_loc[0]<downShark_loc[0]+100) \
-    and (player_loc[1]+100>downShark_loc[1] and player_loc[1]<downShark_loc[1]+200)):
-    
-    print("GAME OVER")
-    print("Your score was "+str(score))
-    print("At level "+str(level))
-    uploadHighScore(score, str(playerName))
-    getYourHighScores(str(playerName))
-    print()
-    getTopTenScores()
-    break
-
-  #player movement
-  if tick%2==0:
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and player_loc[0]>0:
-          player_loc[0]+=-1
-    if keys[pygame.K_RIGHT] and player_loc[0] <width - 100:
-          player_loc[0]+=1
-    if keys[pygame.K_DOWN] and player_loc[1] < height-100:
-          player_loc[1]+=1
-    if keys[pygame.K_UP] and player_loc[1]>0:
-          player_loc[1]+=-1
-    
-  #event listeners(quit)
-  for event in pygame.event.get():
-    if event.type == QUIT:
-      running = False
-
-  drawThings()
-
-  #updating score and level
-  scoreText = myFont.render("Score: "+str(score), 1, "black")
-  screen.blit(scoreText, (10,10))
-  levelText = myFont.render("Level: "+str(level), 1, "black")
-  screen.blit(levelText, (width-(width/10), 10))
-  
-  #updating cars
-  screen.blit(rightShark, rightShark_loc)
-  screen.blit(leftShark, leftShark_loc)
-  screen.blit(upShark, upShark_loc)
-  screen.blit(downShark, downShark_loc)
-  screen.blit(player, player_loc)
+  #resetting game conditions and booleans
+  running, running2 = True, True
+  screen.fill(backgroundColor)
   pygame.display.update()
+  setCenters()
+  tick = 0
+  score = 0
+  level = 0
+  while(running2):
+    drawButtons()
+    for ev in pygame.event.get(): 
+      if ev.type == pygame.QUIT:
+        pygame.quit()
+        running, running2 = False, False
+        break
+      #checks if a mouse is clicked
+      if ev.type == pygame.MOUSEBUTTONDOWN:
+        if abs(mouse[0]-playButton_loc.center[0])<150 \
+          and abs(mouse[1]-playButton_loc.center[1])<50:
+          running2 = False
+          screen.fill(backgroundColor)
+          break
+    mouse = pygame.mouse.get_pos()
+    pygame.display.update()
+
+  #event listener for highscore button
+  #if highscore button gets pressed:
+  # sort, then display using text module (for loop)
+
+  #game loop
+  scoreScreenIndicator = 0
+  time.sleep(1)
+  while(running):
+    tick+=1
+    #animating sharks and level screen
+    if score<20:
+      level = 1
+      if scoreScreenIndicator==0:
+        scoreScreenIndicator+=1
+        drawLevelScreen(level)
+      if tick%2==0:
+        if score%4==0:
+          leftShark_loc[0]+=-1
+        if score%4==1:
+          rightShark_loc[0]+=1
+        if score%4==2:
+          upShark_loc[1]+=-1
+        if score%4==3:
+          downShark_loc[1]+=1
+    elif score<40:
+      level = 2
+      if scoreScreenIndicator==1:
+        drawLevelScreen(level)
+        scoreScreenIndicator+=1
+      if tick%2==0:
+        if score%4==0:
+          leftShark_loc[0]+=-1
+          downShark_loc[1]+=1
+        if score%4==2:
+          rightShark_loc[0]+=1
+          upShark_loc[1]+=-1
+    elif score<80:
+      level = 3
+      if scoreScreenIndicator==2:
+        drawLevelScreen(level)
+        scoreScreenIndicator+=1
+      if tick%2==0:
+        leftShark_loc[0]+=-1
+        downShark_loc[1]+=1
+        rightShark_loc[0]+=1
+        upShark_loc[1]+=-1
+    elif score < 120:
+      level = 4
+      if scoreScreenIndicator==3:
+        drawLevelScreen(level)
+        scoreScreenIndicator+=1
+      if tick%3>0:
+        leftShark_loc[0]+=-1
+        downShark_loc[1]+=1
+        rightShark_loc[0]+=1
+        upShark_loc[1]+=-1
+    else:
+      level = 5
+      if scoreScreenIndicator==3:
+        drawLevelScreen(level)
+        scoreScreenIndicator+=1
+      leftShark_loc[0]+=-1
+      downShark_loc[1]+=1
+      rightShark_loc[0]+=1
+      upShark_loc[1]+=-1
+          
+
+    #resetting sharks and increasing score
+    if leftShark_loc[0]< -200:
+      leftShark_loc.center = rightSide, random.randint(0,800)
+      score+=1
+    if rightShark_loc[0]> width:
+      rightShark_loc.center = leftSide, random.randint(0,800)
+      score+=1
+    if upShark_loc[1] < -200:
+      upShark_loc.center = random.randint(0,800), bottomSide
+      score+=1
+    if downShark_loc[1] > height:
+      downShark_loc.center = random.randint(0,800), topSide
+      score+=1
+    
+
+    #end game condition
+    if ((player_loc[0]+100>leftShark_loc[0] and player_loc[0]<leftShark_loc[0]+200) \
+      and (player_loc[1]+100>leftShark_loc[1] and player_loc[1]<leftShark_loc[1]+100))\
+        or\
+          ((player_loc[0]+100>rightShark_loc[0] and player_loc[0]<rightShark_loc[0]+200) \
+      and (player_loc[1]+100>rightShark_loc[1] and player_loc[1]<rightShark_loc[1]+100))\
+        or\
+          ((player_loc[0]+100>upShark_loc[0] and player_loc[0]<upShark_loc[0]+100) \
+      and (player_loc[1]+100>upShark_loc[1] and player_loc[1]<upShark_loc[1]+200))\
+        or\
+          ((player_loc[0]+100>downShark_loc[0] and player_loc[0]<downShark_loc[0]+100) \
+      and (player_loc[1]+100>downShark_loc[1] and player_loc[1]<downShark_loc[1]+200)):
+      
+      print("GAME OVER")
+      print("Your score was "+str(score))
+      print("At level "+str(level))
+      uploadHighScore(score, str(playerName))
+      getYourHighScores(str(playerName))
+      print()
+      getTopTenScores()
+      screen.blit(bloodSplatter, (0,0))
+      pygame.display.update()
+      time.sleep(2)
+      #running, running2 = False, False
+      break
+
+    #player movement
+    if tick%2==0:
+      keys = pygame.key.get_pressed()
+      if keys[pygame.K_LEFT] and player_loc[0]>0:
+            player_loc[0]+=-1
+      if keys[pygame.K_RIGHT] and player_loc[0] <width - 100:
+            player_loc[0]+=1
+      if keys[pygame.K_DOWN] and player_loc[1] < height-100:
+            player_loc[1]+=1
+      if keys[pygame.K_UP] and player_loc[1]>0:
+            player_loc[1]+=-1
+      
+    #event listeners(quit)
+    for event in pygame.event.get():
+      if event.type == QUIT:
+        running = False
+
+    drawThings()
+
+    #updating score and level
+    scoreText = myFont.render("Score: "+str(score), 1, "black")
+    screen.blit(scoreText, (10,10))
+    levelText = myFont.render("Level: "+str(level), 1, "black")
+    screen.blit(levelText, (width-(width/10), 10))
+    
+    #updating cars
+    screen.blit(rightShark, rightShark_loc)
+    screen.blit(leftShark, leftShark_loc)
+    screen.blit(upShark, upShark_loc)
+    screen.blit(downShark, downShark_loc)
+    screen.blit(player, player_loc)
+    pygame.display.update()
 
 pygame.quit()
