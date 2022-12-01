@@ -5,6 +5,8 @@ import time
 from datetime import datetime
 import json
 
+pygame.init()
+
 macRoute = "/Users/darrenosborne/Programming/SharkGame/"
 windowsRoute = "C:\\Users\\Darren Osborne\\Documents\\Programming\\SharkGame\\"
 otherRoute = "C:\\Users\\Ethan\\OneDrive\\Documents\\Coding\\GitStuff\\DarrenGame\\SharkGame\\"
@@ -18,7 +20,14 @@ bottomSide = height + 100
 level = 1 
 score = 0
 backgroundColor = (21, 137, 238)
-pygame.init()
+#fonts
+scoreScreenFont = pygame.font.SysFont("Times New Roman", 40)
+myFont = pygame.font.SysFont("Times New Roman", 18)
+highscoreFont = pygame.font.SysFont("Times New Roman", 40)
+#top ten scores list
+topTenScores = []
+
+
 
 running, running2 = True, True
 
@@ -104,7 +113,7 @@ def getTopTenScores():
   highscores = json.load(f)
 
 
-  topTenScores = []
+  
   for highscore in highscores:
     if not str(highscores[highscore][0]) == "placeholder":
       topTenScores.append(highscores[highscore])
@@ -117,7 +126,6 @@ def getTopTenScores():
     print(str(i+1) + ": " + str(score[0]) + " Points on " + str(score[2]) + " by " + str(score[1]))
     if i+1 == 10:
       break
-
 
 def drawThings():
   pygame.draw.rect(screen, (255,255,255), (10, 10, width/10, height/30))
@@ -136,15 +144,22 @@ def drawButtons():
   screen.blit(titleImage, titleImage_loc)
 def drawBackButton():
   screen.blit(backButton, backButton_loc)
+def drawHighScores(tp10):
+  tp10.sort()
+  tp10.reverse()
+  titleHighscore = highscoreFont.render("Top Ten Scores of All Time are: ", 1, "black")
+  screen.blit(titleHighscore, (5, 0))
+  for i, score in enumerate(tp10):
+    eachHighscore = highscoreFont.render(str(i+1) + ": " + str(score[0]) + " Points on " + str(score[2]) + " by " + str(score[1]), 1, "black")
+    screen.blit(eachHighscore, (5, height*0.08*(1+i)))
+    if i+1 == 10:
+      break
+  
+  
 
 pygame.display.set_caption("AnotherGame")
 pygame.display.update()
 
-#score and level font
-scoreScreenFont = pygame.font.SysFont("Times New Roman", 40)
-myFont = pygame.font.SysFont("Times New Roman", 18)
-scoreText = myFont.render("Score: "+str(score), 1, "black")
-levelText = myFont.render("Level: "+str(level), 1, "black")
 
 # loading sharks and player
 rightShark = pygame.image.load(route+"RightShark.png")
@@ -177,7 +192,7 @@ highscoresButton_loc = highscoresButton.get_rect()
 highscoresButton_loc.center = width*0.75, height*0.75
 backButton = pygame.image.load(route+"BackButton.png")
 backButton_loc = backButton.get_rect()
-backButton_loc.center = width*0.25, height*0.75
+backButton_loc.center = width*0.5, height*0.94
 titleImage = pygame.image.load(route+"TitleImage.png")
 titleImage_loc = titleImage.get_rect()
 titleImage_loc.center = width*0.5, height*0.4
@@ -185,11 +200,9 @@ bloodSplatter = pygame.image.load(route+"BloodSplatter.png")
 bloodSplatter_loc = titleImage.get_rect()
 bloodSplatter_loc.center = width*0.5, height*0.5
 
-#crafted coordinate containers
-#rightShark_locContainer = 0
-#leftShark_locContainer = 0
-tick = 0
 
+tick = 0
+getTopTenScores()
 playerName = str(input("What is your player name?"))
 #entire run loop
 while(running):
@@ -201,8 +214,11 @@ while(running):
   tick = 0
   score = 0
   level = 0
+  #pregame loop
+  homepage = True
   while(running2):
-    drawButtons()
+    if homepage:
+      drawButtons()
     for ev in pygame.event.get(): 
       if ev.type == pygame.QUIT:
         pygame.quit()
@@ -210,11 +226,26 @@ while(running):
         break
       #checks if a mouse is clicked
       if ev.type == pygame.MOUSEBUTTONDOWN:
-        if abs(mouse[0]-playButton_loc.center[0])<150 \
-          and abs(mouse[1]-playButton_loc.center[1])<50:
-          running2 = False
-          screen.fill(backgroundColor)
-          break
+        if homepage:
+          if abs(mouse[0]-playButton_loc.center[0])<150 \
+            and abs(mouse[1]-playButton_loc.center[1])<50:
+            running2 = False
+            screen.fill(backgroundColor)
+            break
+          if abs(mouse[0]-highscoresButton_loc.center[0])<150 \
+            and abs(mouse[1]-highscoresButton_loc[1])<50:
+            homepage = False
+            screen.fill(backgroundColor)
+            drawHighScores(topTenScores)
+            drawBackButton()
+            pygame.display.update()
+        if not(homepage):
+          if abs(mouse[0]-backButton_loc.center[0])<100 \
+            and abs(mouse[1]-backButton_loc.center[1])<50:
+            homepage = True
+            screen.fill(backgroundColor)
+            pygame.display.update()
+
     mouse = pygame.mouse.get_pos()
     pygame.display.update()
 
