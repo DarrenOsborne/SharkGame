@@ -245,7 +245,6 @@ while(running):
             homepage = True
             screen.fill(backgroundColor)
             pygame.display.update()
-
     mouse = pygame.mouse.get_pos()
     pygame.display.update()
 
